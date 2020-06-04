@@ -1,4 +1,38 @@
-body {
-    color: white;
-    background-color: black;
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#content, #menu-area, #draw-area, .menu-item{
+    border-style: solid;
+    border-width: 1px;
+}
+
+#content {
+    display: grid;
+    text-align: center;
+    grid-template-columns: 200px 1fr;
+    height: 100%;
+}
+
+#draw-area {
+    height: 600px;
+    background-color: midnightblue;
+    margin: 5px 5px 5px 0;
+    border-radius: 5px;
+}
+
+#menu-area {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 5px 5px 5px 5px;
+    border-radius: 5px;
+}
+
+.menu-item {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    border-radius: 5px;
 }
