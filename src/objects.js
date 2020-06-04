@@ -1,5 +1,3 @@
-import { createMenu } from "./menu";
-
 export class Menu {
     
     constructor(){
@@ -13,9 +11,9 @@ export class Menu {
     }
 
     renderItems(idToRenderTo) {
-        const div = document.getElementById(idToRenderTo);
+        const rendElmt = document.getElementById(idToRenderTo);
         this.items.forEach(element => {
-            div.appendChild(element.div);
+            rendElmt.appendChild(element.createDiv());
         });
     }
 }
@@ -28,18 +26,17 @@ class MenuItem {
         this.id = id;
         this.selected = false;
         this.order = order;
-        this.div = this.createDiv();
     }
 
     createDiv() {
-        this.div = document.createElement('div');
-        this.div.innerText = this.title;
+        const div = document.createElement('div');
+        div.innerText = this.title;
         if (this.cssClassName !== ""){
-            this.div.classList.add(this.cssClassName);
+            div.classList.add(this.cssClassName);
         }
         if (this.id !== ""){
-            this.div.id = this.id;
+            div.id = this.id;
         }
-        return this.div;
+        return div;
     }
 }

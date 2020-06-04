@@ -1,6 +1,6 @@
 import "./styles.css";
 import "./two";
-import { createMenu } from "./menu";
+import { Menu } from "./objects";
 
 const gardenPlan = function() {
 
@@ -18,10 +18,14 @@ const gardenPlan = function() {
     const circ = two.makeCircle(100, 100, 50);
 
     two.update();
-    
-    const menu = createMenu();
-    menu.renderItems('menu-area');
 
+    const menu = new Menu();
+    menu.addItem('Box','menu-item','menu-box', 10);
+    menu.renderItems('menu-area');
+    
+    document.getElementById('menu-box').addEventListener('click', (event) => {
+        console.log('box');
+    });
 };
 
 window.onload = gardenPlan;
