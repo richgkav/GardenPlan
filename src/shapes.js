@@ -1,5 +1,3 @@
-import "./two";
-
 // to keep track of shapes in drawing area
 
 export class AllShapes {
@@ -8,7 +6,6 @@ export class AllShapes {
     }
 
     addShape(twoShape) {
-
         this.shapes.push(new Shape(twoShape));
     }
 }

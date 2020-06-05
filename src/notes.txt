@@ -1,3 +1,20 @@
+
+Application states
+==================
+
+user clicks menu item to add a shape
+- shape is auto-selected (Transformer)
+- shape is modified
+- modify mode is exited
+-- shape is un-selected
+
+
+
+
+
+
+
+
 *** Get mouse position on canvas ***
 
 	canvas.addEventListener('mousemove', function(evt) {

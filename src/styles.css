@@ -3,15 +3,16 @@
     padding: 0;
 }
 
-#content, #menu-area, #draw-area, .menu-item{
+#content, #menu-buttons, #draw-area, .menu-item, #edit-area{
     border-style: solid;
     border-width: 1px;
+    border-radius: 5px;
 }
 
 #content {
     display: grid;
     text-align: center;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 220px 1fr;
     height: 100%;
 }
 
@@ -19,22 +20,30 @@
     height: 600px;
     background-color: midnightblue;
     margin: 5px 5px 5px 0;
-    border-radius: 5px;
 }
 
 #menu-area {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+}
+
+#menu-buttons {
     display: flex;
     flex-direction: row;
+    align-content: flex-start;
     flex-wrap: wrap;
     margin: 5px 5px 5px 5px;
-    border-radius: 5px;
+}
+
+#edit-area {
+    margin: 0 5px 5px 5px;
 }
 
 .menu-item {
-    width: 50px;
-    height: 50px;
+    width: fit-content;
+    height: 30px;
     margin: 5px;
-    border-radius: 5px;
+    padding: 2px;
 }
 
 .menu-item:hover {
