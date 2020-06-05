@@ -16,6 +16,30 @@ export class Menu {
             rendElmt.appendChild(element.createDiv());
         });
     }
+
+    getItem(id) {
+        for (let i = 0; i != this.items.length; i++) {
+            if (this.items[i].id === id) {
+                return this.items[i];
+            }
+        }
+        return false;
+    }
+
+    // selects passed id and unselects everything else
+
+    selectItem(element) {
+        for (let i = 0; i != this.items.length; i++) {
+            this.items[i].selected = false;
+            document.getElementById(this.items[i].id).classList.remove('menu-item-selected');
+            
+            if (this.items[i].id === element.id) {
+                this.items[i].selected = true;
+                element.classList.add('menu-item-selected');
+                console.log(`menu ${this.items[i].id} selected`);
+            }
+        }
+    }
 }
 
 class MenuItem {
