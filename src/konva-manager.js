@@ -7,7 +7,7 @@ export const transformer = new Konva.Transformer();
 export const kMan = (function konvaManager() {
 
     function setup() {
-        console.log('kMan setup called');
+
         const drawArea = document.getElementById('draw-area');
         const xDim = drawArea.offsetWidth-2;
         const yDim = drawArea.offsetHeight;
@@ -23,47 +23,74 @@ export const kMan = (function konvaManager() {
         layer.add(transformer);
     
         // -------------------------------------------------------------------------- //
-        // clicks should select/deselect shapes
+        // Shape selecting and transformer
+
         stage.on('click tap', function (e) {
     
             // if click on empty area - remove all selections
             if (e.target === stage) {
-                transformer.nodes([]);
+                clearTransformer();
                 layer.draw();
                 return;
             }
     
-            /*
-            // do nothing if clicked NOT on our rectangles
-            if (!e.target.hasName('rect')) {
-                return;
-            }
-            */
-    
-            // do we pressed shift or ctrl?
+            // shift or ctrl pressed
             const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-            const isSelected = transformer.nodes().indexOf(e.target) >= 0;
+            let isSelected = undefined;
+
+            if (transformer.nodes()) {
+                isSelected = transformer.nodes().indexOf(e.target) >= 0;
+            }
     
             if (!metaPressed && !isSelected) {
-                // if no key pressed and the node is not selected
-                // select just one
+
+                // No key pressed and the node not selected then select only one
+                clearTransformer();
                 transformer.nodes([e.target]);
+                e.target.draggable(true);
+
             } else if (metaPressed && isSelected) {
-                // if we pressed keys and node was selected
-                // we need to remove it from selection:
-                const nodes = transformer.nodes().slice(); // use slice to have new copy of array
-                // remove node from array
-                nodes.splice(nodes.indexOf(e.target), 1);
-                transformer.nodes(nodes);
+
+                e.target.draggable(false);
+
+                // Keys pressed and node already selected then remove from selection  
+
+                const nodes = transformer.nodes().slice();  // copy array
+                nodes.splice(nodes.indexOf(e.target), 1);   // remove node
+                transformer.nodes(nodes);                   // set to copied array
+
             } else if (metaPressed && !isSelected) {
+
                 // add the node into selection
                 const nodes = transformer.nodes().concat([e.target]);
                 transformer.nodes(nodes);
+                e.target.draggable(true);
             }
+
             layer.draw();
         });
     }
 
-    return {setup}
+    function clearTransformer() {
+        if (transformer.nodes()){
+            transformer.nodes().forEach(node => {
+                node.draggable(false);
+                updateXYsize(node);
+            })
+        }
+        transformer.nodes([]);
+    }
+
+    function updateXYsize(node) {
+        node.width(node.width() * node.scaleX());
+        node.height(node.height() * node.scaleY());
+        node.scaleX(1);
+        node.scaleY(1);
+    }
+
+    return {
+        setup,
+        clearTransformer
+    }
 
 })();

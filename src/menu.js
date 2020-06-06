@@ -36,7 +36,6 @@ export class Menu {
             if (this.items[i].id === element.id) {
                 this.items[i].selected = true;
                 element.classList.add('menu-item-selected');
-                console.log(`menu ${this.items[i].id} selected`);
             }
         }
     }
