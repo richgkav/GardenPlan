@@ -40,6 +40,10 @@ export class Menu {
             }
         }
     }
+
+    createMenu() {
+
+    }
 }
 
 class MenuItem {
