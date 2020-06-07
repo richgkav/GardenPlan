@@ -2,6 +2,7 @@ import "./styles.css";
 import {Menu} from "./menu";
 import Konva from 'konva';
 import {kMan, layer, stage, clearTransformer} from './konva-manager';
+import {Editor, Field} from './editor';
 
 window.onload = gardenPlan;
 
@@ -10,7 +11,8 @@ function gardenPlan() {
 // -------------------------------------------------------------------------- //
 // Initialise 2d drawing library
 
-    kMan.setup();
+    const editor = new Editor('edit-area');
+    kMan.setup(editor);
 
 // -------------------------------------------------------------------------- //
 
@@ -50,5 +52,6 @@ function gardenPlan() {
         menu.selectItem(elMenuCircle);   
     });
 
-
 };
+
+export {gardenPlan}

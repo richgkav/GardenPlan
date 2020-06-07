@@ -1,4 +1,6 @@
 import Konva from 'konva';
+import {Field} from './editor';
+import {gardenPlan} from './index';
 
 export const layer = new Konva.Layer();
 export let stage = undefined;
@@ -6,8 +8,9 @@ export const transformer = new Konva.Transformer();
 
 export const kMan = (function konvaManager() {
 
-    function setup() {
+    function setup(_editor) {
 
+        const editor = _editor;
         const drawArea = document.getElementById('draw-area');
         const xDim = drawArea.offsetWidth-2;
         const yDim = drawArea.offsetHeight;
@@ -30,6 +33,7 @@ export const kMan = (function konvaManager() {
             // if click on empty area - remove all selections
             if (e.target === stage) {
                 clearTransformer();
+                editor.deleteFields();
                 layer.draw();
                 return;
             }
@@ -48,6 +52,13 @@ export const kMan = (function konvaManager() {
                 clearTransformer();
                 transformer.nodes([e.target]);
                 e.target.draggable(true);
+
+                // >> setup editor with values from this shape <<
+                const fieldX = new Field('x', e.target.x());
+                const fieldY = new Field('y', e.target.y());
+                editor.addField(fieldX);
+                editor.addField(fieldY);
+                editor.renderFields();
 
             } else if (metaPressed && isSelected) {
 

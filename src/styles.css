@@ -14,6 +14,7 @@
     text-align: center;
     grid-template-columns: 220px 1fr;
     height: 100%;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
 }
 
 #draw-area {
@@ -27,7 +28,7 @@
     grid-template-rows: 1fr 1fr;
 }
 
-#menu-buttons {
+#menu-buttons, #edit-area {
     display: flex;
     flex-direction: row;
     align-content: flex-start;
@@ -39,10 +40,23 @@
     margin: 0 5px 5px 5px;
 }
 
-.menu-item {
+.menu-item, .edit-item {
     width: fit-content;
     height: 30px;
     margin: 5px;
+    padding: 2px;
+}
+
+.edit-item {
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+}
+
+.edit-item>div {
+    font-size: small;
+    border-style: solid;
+    border-width: 1px;
     padding: 2px;
 }
 
