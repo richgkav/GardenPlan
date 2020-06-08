@@ -1,5 +1,8 @@
 import {clearChildElements} from './tools';
 
+// An editor gets created and the fields added when an object is selected.
+// when the object is uselected it is deleted
+
 export class Editor {
     constructor(element) {
         this.fields = [];
@@ -11,10 +14,6 @@ export class Editor {
             arguments[i].element = this.element;
             this.fields.push(arguments[i]);
         }
-
-        this.fields.forEach(el => {
-            console.log(el.element)
-        });
     }
 
     // renders the edit fields under the DOM parent element
@@ -56,6 +55,9 @@ export class Field {
         const itmPropdiv = document.createElement('div');
         itmPropdiv.innerText = this.property; // needs to display shape field value
         edItemdiv.appendChild(itmPropdiv);
+        edItemdiv.addEventListener('click', () => {
+            console.log(itmTitDiv.innerText);
+        });
         return edItemdiv;
     }
 }

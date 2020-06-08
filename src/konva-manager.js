@@ -1,6 +1,5 @@
 import Konva from 'konva';
-import {Field} from './editor';
-import {gardenPlan} from './index';
+import {Field, Editor} from './editor';
 
 export const layer = new Konva.Layer();
 export let stage = undefined;
@@ -8,12 +7,20 @@ export const transformer = new Konva.Transformer();
 
 export const kMan = (function konvaManager() {
 
-    function setup(_editor) {
+    let editor = undefined;
 
-        const editor = _editor;
+    // not possible to return variables ???
+
+    function returnEditor() {
+        return editor;
+    }
+
+    function setup() {
+
         const drawArea = document.getElementById('draw-area');
         const xDim = drawArea.offsetWidth-2;
         const yDim = drawArea.offsetHeight;
+        editor = new Editor('edit-area');
 
         stage = new Konva.Stage({
             container: drawArea,
@@ -101,7 +108,9 @@ export const kMan = (function konvaManager() {
 
     return {
         setup,
-        clearTransformer
+        clearTransformer,
+        returnEditor,
+        editor
     }
 
 })();

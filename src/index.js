@@ -1,8 +1,7 @@
 import "./styles.css";
 import {Menu} from "./menu";
 import Konva from 'konva';
-import {kMan, layer, stage, clearTransformer} from './konva-manager';
-import {Editor, Field} from './editor';
+import {kMan, layer, stage} from './konva-manager';
 
 window.onload = gardenPlan;
 
@@ -11,19 +10,13 @@ function gardenPlan() {
 // -------------------------------------------------------------------------- //
 // Initialise 2d drawing library
 
-    const editor = new Editor('edit-area');
-    kMan.setup(editor);
+    kMan.setup();
 
-// -------------------------------------------------------------------------- //
-
-    const state = {
-        mode: 'none',
-        current: null,      // current shape
-    };
-    
+    console.log(kMan.returnEditor());
+    console.log(kMan.editor);
+  
     const menu = new Menu();
 
-    //menu.addItem('Select','menu-item','menu-select', 10);
     menu.addItem('Rectangle','menu-item','menu-rect', 20);
     menu.addItem('Circle','menu-item','menu-circle', 30);
     menu.renderItems('menu-buttons');
@@ -31,7 +24,7 @@ function gardenPlan() {
     const elMenuBox = document.getElementById('menu-rect');
     elMenuBox.addEventListener('click', (event) => {
         menu.selectItem(elMenuBox);
-        state.mode = 'rect';
+
         const rect = new Konva.Rect({
             x: stage.width() / 2,
             y: stage.height() / 2,
@@ -41,7 +34,6 @@ function gardenPlan() {
             strokeWidth: 2,
         });
 
-        state.current = rect;
         layer.add(rect);
         kMan.clearTransformer(); // unselect and unmove everything
         layer.draw();
