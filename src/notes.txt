@@ -1,18 +1,8 @@
+Future
 
-Application states
-==================
+* check shape type when renderingEditorFields in (konva-man.js) so that fields specific to that shape can be edited (e.g. circle radius)
 
-user clicks menu item to add a shape
-- shape is auto-selected (Transformer)
-- shape is modified
-- modify mode is exited
--- shape is un-selected
-
-
-
-
-
-
+* Undo / redo systems
 
 
 *** Get mouse position on canvas ***

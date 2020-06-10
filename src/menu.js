@@ -1,3 +1,55 @@
+import {kman_layer, kman_stage, kman_clear} from './konva-man';
+
+
+function setup_menu(menu) {
+    menu.addItem('Rectangle','menu-item','menu-rect', 20);
+    menu.addItem('Circle','menu-item','menu-circle', 30);
+    menu.renderItems('menu-buttons');
+
+    // -- adding a rectangle shape -- //
+
+    const elMenuBox = document.getElementById('menu-rect');
+    elMenuBox.addEventListener('click', (event) => {
+        menu.selectItem(elMenuBox);
+
+        const rect = new Konva.Rect({
+            x: kman_stage.width() / 2,
+            y: kman_stage.height() / 2,
+            width: 100,
+            height: 100,
+            fill: 'red',
+            strokeWidth: 2,
+        });
+
+        rect.offsetX(rect.width()/2);
+        rect.offsetY(rect.height()/2);
+
+        // movement and transform events - update editor values
+        rect.on('dragmove', function () {
+            const x = document.getElementById('edit-x');
+            const y = document.getElementById('edit-y');
+            x.innerText = rect.x().toFixed(2);
+            y.innerText = rect.y().toFixed(2);
+        })
+
+        rect.on('transform', function () {
+            const r = document.getElementById('edit-rot');
+            r.innerText = rect.rotation().toFixed(2);
+        });
+
+        kman_layer.add(rect);
+        kman_clear();           // unselect and unmove everything
+        kman_layer.draw();
+    });
+
+    // -- end of adding a rectangle shape -- //
+
+    const elMenuCircle = document.getElementById('menu-circle');
+    elMenuCircle.addEventListener('click', (event) => {
+        menu.selectItem(elMenuCircle);   
+    });
+}
+
 export class Menu {
     
     constructor(){
@@ -67,3 +119,5 @@ class MenuItem {
         return div;
     }
 }
+
+export {setup_menu}

@@ -28,19 +28,14 @@ export class Editor {
         this.fields = [];
     }
 
-    // when a shape is selected it is stored in transformer.nodes() the node is 
-    // passed in this method
-    createShapeEditor(node) {
-
-    }
-
 }
 
 export class Field {
-    constructor(title, property) {
+    constructor(title, property, divId) {
         this.title = title;         // field name (shape property name)
         this.property = property;   // ref to shape property this maps to
         this.element = undefined;   // ref to the parent DOM element
+        this.divId = divId;
     }
 
     createDiv() {
@@ -53,7 +48,8 @@ export class Field {
         itmTitDiv.innerText = this.title;
         edItemdiv.appendChild(itmTitDiv);
         const itmPropdiv = document.createElement('div');
-        itmPropdiv.innerText = this.property; // needs to display shape field value
+        itmPropdiv.innerText = this.property.toFixed(2); // needs to display shape field value
+        itmPropdiv.id = this.divId;
         edItemdiv.appendChild(itmPropdiv);
         edItemdiv.addEventListener('click', () => {
             console.log(itmTitDiv.innerText);
