@@ -1,4 +1,8 @@
-export const timeline = new Timeline();
+let timeline = undefined;
+
+function setup() {
+    timeline = new Timeline();
+}
 
 export class Timeline {
     constructor() {
@@ -51,4 +55,9 @@ class Point {
     setRedo(redo) {
         this.redo = redo;
     }
+}
+
+export {
+    setup as timelineSetup,
+    timeline
 }

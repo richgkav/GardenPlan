@@ -124,6 +124,6 @@ export {
     layer as kman_layer,
     stage as kman_stage,
     transformer as kman_trans,
-    setup as kman_setup,
+    setup as kmanSetup,
     clearTransformer as kman_clear
 }

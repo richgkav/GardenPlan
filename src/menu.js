@@ -1,16 +1,25 @@
 import {kman_layer, kman_stage, kman_clear} from './konva-man';
+import {timeline} from './Timeline';
 
+let menu = undefined;
 
-function setup_menu(menu) {
+function setup() {
+
+    menu = new Menu();
+
+    // idea - can use different classes here for different element  styles
+
     menu.addItem('Rectangle','menu-item','menu-rect', 20);
     menu.addItem('Circle','menu-item','menu-circle', 30);
+    menu.addItem('Undo', 'menu-item', 'menu-undo', 40);
+    menu.addItem('Redo', 'menu-item', 'menu-redo', 40);
     menu.renderItems('menu-buttons');
 
     // -- adding a rectangle shape -- //
 
     const elMenuBox = document.getElementById('menu-rect');
     elMenuBox.addEventListener('click', (event) => {
-        menu.selectItem(elMenuBox);
+        //menu.selectItem(elMenuBox);
 
         const rect = new Konva.Rect({
             x: kman_stage.width() / 2,
@@ -120,4 +129,6 @@ class MenuItem {
     }
 }
 
-export {setup_menu}
+export {
+    setup as menuSetup
+}

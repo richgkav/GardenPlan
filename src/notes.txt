@@ -1,8 +1,14 @@
+
+Next
+
+Figure out how to use undo/redo.
+
+e.g. first shape is created, how is that undone?
+
+
 Future
 
 * check shape type when renderingEditorFields in (konva-man.js) so that fields specific to that shape can be edited (e.g. circle radius)
-
-* Undo / redo systems
 
 
 *** Get mouse position on canvas ***
