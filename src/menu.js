@@ -31,8 +31,8 @@ function setup() {
         });
 
         rect.id(kman_createId());           // Set the id for the shape that is visible
-        console.log('original shape');
-        console.log(rect);
+        //console.log('original shape');
+        //console.log(rect);
 
         // set undo action. this is new object so objBefore === null
         const objAfter = rect.clone();
@@ -77,14 +77,18 @@ function setup() {
         const instruction = actionEvents.undo();
     
         if (instruction && instruction.objBefore === null) {   // object was originally added so need to hide it
-            console.log('Perform undo on id ' + instruction.objAfter.id());
+            //console.log('Perform undo on id ' + instruction.objAfter.id());
 
             const idToSearch = instruction.objAfter.id().substring(4); // remove the undo/redo code from id
-            console.log('looking for ' + idToSearch);
+            //console.log('looking for ' + idToSearch);
 
             const obj_onStage = kman_stage.findOne('#'+ idToSearch);
+            console.log(instruction.objAfter.id());
+            console.log(obj_onStage.id());
+            instruction.objAfter = obj_onStage.clone(); // copy current stage object (for updated values)
+            instruction.objAfter.id('aft-' + instruction.objAfter.id());
             obj_onStage.hide();
-            console.log(`Shape ${obj_onStage.className} with id ${obj_onStage.id()} has been hidden`)
+            //console.log(`Shape ${obj_onStage.className} with id ${obj_onStage.id()} has been hidden`)
             kman_layer.draw();
         }
 
@@ -95,28 +99,31 @@ function setup() {
         const instruction = actionEvents.redo();
 
         if (instruction) {
-            console.log(`Perform redo on id ${instruction.objAfter.id()}`);
+            //console.log(`Perform redo on id ${instruction.objAfter.id()}`);
             // copy objAfter to object on the stage
 
             const idToSearch = instruction.objAfter.id().substring(4);
-            console.log('redo - looking for ' + idToSearch);
+            //console.log('redo - looking for ' + idToSearch);
 
             const obj_onStage = kman_stage.findOne('#'+ idToSearch);
-            console.log('redo - looking to destroy');
+            //console.log('redo - looking to destroy');
             obj_onStage.destroy();
 
 
             const obj_copy = instruction.objAfter.clone();          // copy the stored object ('aft-00')
             obj_copy.id(instruction.objAfter.id().substring(4));    // fix the id (remove 'aft-')
 
-            console.log('recreate onstage with objAfter');
-            console.log(obj_copy);
+            //console.log('recreate onstage with objAfter');
+            //console.log(obj_copy);
+            //console.log(`xy = ${obj_copy.x()} - ${obj_copy.y()}`);
             obj_copy.show();
+
+            obj_copy.offsetX(obj_copy.width()/2);
+            obj_copy.offsetY(obj_copy.height()/2);
+
             kman_layer.add(obj_copy);
             kman_layer.draw();
 
-            // current error is
-            // when re-adding it is not adding a parent (e.g. when originally created it is 'layer')
         }
 
     });
