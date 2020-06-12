@@ -1,5 +1,5 @@
-import {kman_layer, kman_stage, kman_clear} from './konva-man';
-import {timeline} from './Timeline';
+import {kman_layer, kman_stage, kman_clear, kman_createId} from './konva-man';
+import { actionEvents } from './undo-redo';
 
 let menu = undefined;
 
@@ -30,6 +30,16 @@ function setup() {
             strokeWidth: 2,
         });
 
+        rect.id(kman_createId());           // Set the id for the shape that is visible
+        console.log('original shape');
+        console.log(rect);
+
+        // set undo action. this is new object so objBefore === null
+        const objAfter = rect.clone();
+        objAfter.hide();
+        objAfter.id('aft-' + rect.id());    // make id unique
+        actionEvents.newInstruction(null, objAfter);
+
         rect.offsetX(rect.width()/2);
         rect.offsetY(rect.height()/2);
 
@@ -57,6 +67,60 @@ function setup() {
     elMenuCircle.addEventListener('click', (event) => {
         menu.selectItem(elMenuCircle);   
     });
+
+    const elUndoButton = document.getElementById('menu-undo');
+    elUndoButton.addEventListener('click', function() {
+
+        // need to look at the Instruction stored in the current actionEvent to check
+        // the objBefore & objAfter values to indicate what needs to be done
+
+        const instruction = actionEvents.undo();
+    
+        if (instruction && instruction.objBefore === null) {   // object was originally added so need to hide it
+            console.log('Perform undo on id ' + instruction.objAfter.id());
+
+            const idToSearch = instruction.objAfter.id().substring(4); // remove the undo/redo code from id
+            console.log('looking for ' + idToSearch);
+
+            const obj_onStage = kman_stage.findOne('#'+ idToSearch);
+            obj_onStage.hide();
+            console.log(`Shape ${obj_onStage.className} with id ${obj_onStage.id()} has been hidden`)
+            kman_layer.draw();
+        }
+
+    });
+
+    const elRedoButton = document.getElementById('menu-redo');
+    elRedoButton.addEventListener('click', function() {
+        const instruction = actionEvents.redo();
+
+        if (instruction) {
+            console.log(`Perform redo on id ${instruction.objAfter.id()}`);
+            // copy objAfter to object on the stage
+
+            const idToSearch = instruction.objAfter.id().substring(4);
+            console.log('redo - looking for ' + idToSearch);
+
+            const obj_onStage = kman_stage.findOne('#'+ idToSearch);
+            console.log('redo - looking to destroy');
+            obj_onStage.destroy();
+
+
+            const obj_copy = instruction.objAfter.clone();          // copy the stored object ('aft-00')
+            obj_copy.id(instruction.objAfter.id().substring(4));    // fix the id (remove 'aft-')
+
+            console.log('recreate onstage with objAfter');
+            console.log(obj_copy);
+            obj_copy.show();
+            kman_layer.add(obj_copy);
+            kman_layer.draw();
+
+            // current error is
+            // when re-adding it is not adding a parent (e.g. when originally created it is 'layer')
+        }
+
+    });
+
 }
 
 export class Menu {
@@ -130,5 +194,5 @@ class MenuItem {
 }
 
 export {
-    setup as menuSetup
+    setup as setup_menu
 }

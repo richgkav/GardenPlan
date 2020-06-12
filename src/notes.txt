@@ -1,13 +1,28 @@
 
-Next
+Undo functionality
+==================
 
-Figure out how to use undo/redo.
+For every instruction of the timeline:
 
-e.g. first shape is created, how is that undone?
+    There is a copy of the object before change
+    There is a copy of the object after change
+
+
+* Adding a new object
+    objBefore = null
+    objAfter = copy of shape
+
+
+
+If you undo then make a change all instructions after that time are deleted
+
+
+
+
 
 
 Future
-
+======
 * check shape type when renderingEditorFields in (konva-man.js) so that fields specific to that shape can be edited (e.g. circle radius)
 
 

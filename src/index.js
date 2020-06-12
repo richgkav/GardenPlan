@@ -1,14 +1,14 @@
 import "./styles.css";
-import { menuSetup } from "./menu";
-import { kmanSetup } from './konva-man';
-import { timelineSetup } from "./Timeline";
+import { setup_menu } from "./menu";
+import { setup_Konva } from './konva-man';
+import { setup_actionEvents } from "./undo-redo";
 
 const gardenPlan = function() {
-    kmanSetup();
-    timelineSetup();
-    menuSetup();
+    setup_Konva();
+    setup_actionEvents();
+    setup_menu();
 };
 
-export {gardenPlan}
+export { gardenPlan }
 
 window.onload = gardenPlan;

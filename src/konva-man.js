@@ -92,10 +92,18 @@ function renderEditorFields(event) {
     const fieldX = new Field('x', event.target.x(), 'edit-x');
     const fieldY = new Field('y', event.target.y(), 'edit-y');
     const fieldR = new Field('r', event.target.rotation(), 'edit-rot');
+    const fieldInfo = new Field('info', event.target.id(), 'edit-info');
     editor.addField(fieldX);
     editor.addField(fieldY);
     editor.addField(fieldR);
+    editor.addField(fieldInfo);
     editor.renderFields();
+}
+
+let konvaId = 0; // unique id for each shape
+
+function createId() {
+    return 'kon' + konvaId++;
 }
 
 // clear all shapes from the edit mode
@@ -124,6 +132,7 @@ export {
     layer as kman_layer,
     stage as kman_stage,
     transformer as kman_trans,
-    setup as kmanSetup,
-    clearTransformer as kman_clear
+    setup as setup_Konva,
+    clearTransformer as kman_clear,
+    createId as kman_createId
 }

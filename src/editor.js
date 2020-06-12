@@ -48,7 +48,13 @@ export class Field {
         itmTitDiv.innerText = this.title;
         edItemdiv.appendChild(itmTitDiv);
         const itmPropdiv = document.createElement('div');
-        itmPropdiv.innerText = this.property.toFixed(2); // needs to display shape field value
+        const prop = this.property;
+        if (isNaN(prop)){
+            itmPropdiv.innerText = prop;
+        }
+        else {
+            itmPropdiv.innerText = prop.toFixed(2);
+        }
         itmPropdiv.id = this.divId;
         edItemdiv.appendChild(itmPropdiv);
         edItemdiv.addEventListener('click', () => {
