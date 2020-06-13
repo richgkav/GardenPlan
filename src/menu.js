@@ -92,70 +92,54 @@ function setup() {
     const elUndoButton = document.getElementById('menu-undo');
     elUndoButton.addEventListener('click', function() {
 
+        kman_clear();
         // need to look at the Instruction stored in the current actionEvent to check
         // the objBefore & objAfter values to indicate what needs to be done
 
         const instruction = actionEvents.undo();        // get the instruction 
     
-        // Undo operation for object that was added
-        if (instruction && instruction.objBefore === null) {
+        // Undo for object that was ADDED (new)
 
-            // Get the node on the stage that matches the one in the 
+        if (instruction && instruction.objBefore === null) {
             const idToSearch = instruction.objAfter.id().substring(4);
             const obj_onStage = kman_stage.findOne('#'+ idToSearch);
             instruction.objAfter = obj_onStage.clone(); // copy current stage object (for updated values)
-            //instruction.objAfter.id('aft-' + instruction.objAfter.id());
             setAfterID(instruction.objAfter);
             obj_onStage.hide();
-            kman_clear();
             kman_layer.draw();
         }
 
-        // Undo op for object that was modified
+        // Undo for object that was CHANGED OR DELETED
+
         if (instruction && instruction.objBefore !== null) {
-            //console.log('undo for modified object');
-
-            const idToSearch = instruction.objBefore.id().substring(4);
-            //console.log(idToSearch);
-
+            const idToSearch = instruction.objBefore.id().substring(4);     // the id of the layer shape
             const obj_onStage = kman_stage.findOne('#'+ idToSearch);
-            //console.log(obj_onStage);
-
             obj_onStage.destroy();
-            //console.log('object destroyed');
-
-            const obj_newStage = instruction.objBefore.clone();
-            //console.log('new object created');
-            //console.log(obj_newStage);
-            
-            // here the objBefore id is incorrect should be bef-kon0 but it is kon0
-
-            obj_newStage.id(idToSearch);
-            console.log(obj_newStage);
-
-            kman_layer.add(obj_newStage);
+            const obj_befClone = instruction.objBefore.clone();
+            obj_befClone.id(idToSearch);                                    // correct the id
+            kman_layer.add(obj_befClone);
             kman_layer.draw();
         }
 
     });
+
+    // ------------------------ REDO ------------------------ //
+    // only need to copy objAfter to layer in all cases
 
     const elRedoButton = document.getElementById('menu-redo');
     elRedoButton.addEventListener('click', function() {
         const instruction = actionEvents.redo();
 
         if (instruction) {
-            // copy objAfter to object on the stage
-
             const idToSearch = instruction.objAfter.id().substring(4);
             const obj_onStage = kman_stage.findOne('#'+ idToSearch);
             obj_onStage.destroy();
             const obj_copy = instruction.objAfter.clone();          // copy the stored object ('aft-00')
-            obj_copy.id(instruction.objAfter.id().substring(4));    // fix the id (remove 'aft-')
+            obj_copy.id(idToSearch);
             obj_copy.show();
             kman_layer.add(obj_copy);
             kman_layer.draw();
         }
-
     });
 
 }
