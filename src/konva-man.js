@@ -32,6 +32,7 @@ function setup() {
     stage.on('click tap', function (e) {
 
         // if click on empty area - remove all selections
+        
         if (e.target === stage) {
 
             clearTransformer();

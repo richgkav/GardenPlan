@@ -1,4 +1,11 @@
 
+NEXT
+
+Tidy code!
+
+Setting the offset - only needs to be done when creating a shape or changing a shapes size
+
+
 Undo functionality
 ==================
 

@@ -17,6 +17,8 @@ function setup() {
 
     // -- adding a rectangle shape -- //
 
+    let storeObjBefore = undefined;
+
     const elMenuBox = document.getElementById('menu-rect');
     elMenuBox.addEventListener('click', (event) => {
         //menu.selectItem(elMenuBox);
@@ -31,17 +33,34 @@ function setup() {
         });
 
         rect.id(kman_createId());           // Set the id for the shape that is visible
-        //console.log('original shape');
-        //console.log(rect);
+        setOffsetCenter(rect);              // set for newly created shape
 
         // set undo action. this is new object so objBefore === null
         const objAfter = rect.clone();
-        objAfter.hide();
-        objAfter.id('aft-' + rect.id());    // make id unique
-        actionEvents.newInstruction(null, objAfter);
+        //console.log('x');
+        //console.log(objAfter);
+        setAfterID(objAfter);
+        actionEvents.createAdded(objAfter);
+        //setOffsetCenter(objAfter); - offset is copied also no need to set here
 
-        rect.offsetX(rect.width()/2);
-        rect.offsetY(rect.height()/2);
+        rect.on('dragstart transformstart', function(event) {
+            storeObjBefore = event.target.clone();
+            setBeforeID(storeObjBefore);
+            //setOffsetCenter(storeObjBefore);
+            //storeObjBefore.hide();
+        });
+
+        rect.on('dragend transformend', function(event) {
+            const objAfter = event.target.clone();
+           // objAfter.id('aft-' + event.target.id());
+            setAfterID(objAfter);
+            //setOffsetCenter(objAfter);
+            //objAfter.hide();
+            actionEvents.createChanged(storeObjBefore, objAfter);
+            //actionEvents.newInstruction(storeObjBefore, objAfter);
+
+            // clear transform to remove editor bounds
+        })
 
         // movement and transform events - update editor values
         rect.on('dragmove', function () {
@@ -68,27 +87,53 @@ function setup() {
         menu.selectItem(elMenuCircle);   
     });
 
+    // ------------------------ UNDO ------------------------ //
+
     const elUndoButton = document.getElementById('menu-undo');
     elUndoButton.addEventListener('click', function() {
 
         // need to look at the Instruction stored in the current actionEvent to check
         // the objBefore & objAfter values to indicate what needs to be done
 
-        const instruction = actionEvents.undo();
+        const instruction = actionEvents.undo();        // get the instruction 
     
-        if (instruction && instruction.objBefore === null) {   // object was originally added so need to hide it
-            //console.log('Perform undo on id ' + instruction.objAfter.id());
+        // Undo operation for object that was added
+        if (instruction && instruction.objBefore === null) {
 
-            const idToSearch = instruction.objAfter.id().substring(4); // remove the undo/redo code from id
-            //console.log('looking for ' + idToSearch);
+            // Get the node on the stage that matches the one in the 
+            const idToSearch = instruction.objAfter.id().substring(4);
+            const obj_onStage = kman_stage.findOne('#'+ idToSearch);
+            instruction.objAfter = obj_onStage.clone(); // copy current stage object (for updated values)
+            //instruction.objAfter.id('aft-' + instruction.objAfter.id());
+            setAfterID(instruction.objAfter);
+            obj_onStage.hide();
+            kman_clear();
+            kman_layer.draw();
+        }
+
+        // Undo op for object that was modified
+        if (instruction && instruction.objBefore !== null) {
+            //console.log('undo for modified object');
+
+            const idToSearch = instruction.objBefore.id().substring(4);
+            //console.log(idToSearch);
 
             const obj_onStage = kman_stage.findOne('#'+ idToSearch);
-            console.log(instruction.objAfter.id());
-            console.log(obj_onStage.id());
-            instruction.objAfter = obj_onStage.clone(); // copy current stage object (for updated values)
-            instruction.objAfter.id('aft-' + instruction.objAfter.id());
-            obj_onStage.hide();
-            //console.log(`Shape ${obj_onStage.className} with id ${obj_onStage.id()} has been hidden`)
+            //console.log(obj_onStage);
+
+            obj_onStage.destroy();
+            //console.log('object destroyed');
+
+            const obj_newStage = instruction.objBefore.clone();
+            //console.log('new object created');
+            //console.log(obj_newStage);
+            
+            // here the objBefore id is incorrect should be bef-kon0 but it is kon0
+
+            obj_newStage.id(idToSearch);
+            console.log(obj_newStage);
+
+            kman_layer.add(obj_newStage);
             kman_layer.draw();
         }
 
@@ -99,35 +144,33 @@ function setup() {
         const instruction = actionEvents.redo();
 
         if (instruction) {
-            //console.log(`Perform redo on id ${instruction.objAfter.id()}`);
             // copy objAfter to object on the stage
 
             const idToSearch = instruction.objAfter.id().substring(4);
-            //console.log('redo - looking for ' + idToSearch);
-
             const obj_onStage = kman_stage.findOne('#'+ idToSearch);
-            //console.log('redo - looking to destroy');
             obj_onStage.destroy();
-
-
             const obj_copy = instruction.objAfter.clone();          // copy the stored object ('aft-00')
             obj_copy.id(instruction.objAfter.id().substring(4));    // fix the id (remove 'aft-')
-
-            //console.log('recreate onstage with objAfter');
-            //console.log(obj_copy);
-            //console.log(`xy = ${obj_copy.x()} - ${obj_copy.y()}`);
             obj_copy.show();
-
-            obj_copy.offsetX(obj_copy.width()/2);
-            obj_copy.offsetY(obj_copy.height()/2);
-
             kman_layer.add(obj_copy);
             kman_layer.draw();
-
         }
 
     });
 
+}
+
+function setOffsetCenter(node) {
+    node.offsetX(node.width()/2);
+    node.offsetY(node.height()/2);
+}
+
+function setBeforeID(node) {
+    node.id('bef-' + node.id());
+}
+
+function setAfterID(node) {
+    node.id('aft-' + node.id());
 }
 
 export class Menu {
@@ -170,10 +213,6 @@ export class Menu {
                 element.classList.add('menu-item-selected');
             }
         }
-    }
-
-    createMenu() {
-        
     }
 }
 
