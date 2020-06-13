@@ -19,14 +19,14 @@ export class ActionEvents {
     }
 
     undo() {
-        if (this.stepBack()) {
+        if (this._stepBack()) {
             console.log('undo -- location = ' + this.location);
             return this.eventline[this.location];
         }
         return null;
     }
 
-    stepBack() {
+    _stepBack() {
         if (this.location > 0) {
             this.location -= 1;
             return true;
@@ -37,17 +37,30 @@ export class ActionEvents {
     redo() {
         console.log('Perform redo on location = ' + this.location);
         const instruction = this.eventline[this.location];
-        this.stepForward(); // set location to next step
+        this._stepForward(); // set location to next step
         return instruction;
     }
 
-    stepForward() {
+    _stepForward() {
         if (this.location < this.eventline.length) {
             this.location += 1;
             return true;
         }
         return false;
     }
+
+    createAdded(objAfter) {
+        this.newInstruction(null, objAfter);
+    }
+
+    createChanged(objBefore, objAfter) {
+        this.newInstruction(objBefore, objAfter);
+    }
+
+    createDeleted(objBefore) {
+        this.newInstruction(objBefore, null);
+    }
+
 }
 
 // stores object before and after change
@@ -55,11 +68,8 @@ export class ActionEvents {
 // when adding a new object objBefore is set to null so that if undoing and
 // null is found then that meand remove the object
 
-// only need objBefore when creating the object as objAfter needs to be added
-// afterwards
-
-// shapes can be matched up with the copy with the property 'id' which 
-// increases by one each time a shape is created 
+// when undoing objBefore is used
+// when redoing objAfter is used
 
 class Instruction {
     constructor(objBefore, objAfter) {
