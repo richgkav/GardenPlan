@@ -1,7 +1,5 @@
 import Konva from 'konva';
 import {Field, Editor} from './editor';
-import {actionEvents} from './undo-redo';
-//import {setBeforeID, setAfterID} from './menu';
 
 export const layer = new Konva.Layer();
 export let stage = undefined;
@@ -10,8 +8,6 @@ export const transformer = new Konva.Transformer();
 let editor = undefined;
 
 export function setup() {
-
-    //console.log('setup called');
 
     const drawArea = document.getElementById('draw-area');
     const xDim = drawArea.offsetWidth-2;
@@ -36,10 +32,8 @@ export function setup() {
         // if click on empty area - remove all selections
         
         if (e.target === stage) {
-
             clearTransformer();
             editor.deleteFields();
-
             layer.draw();
             return;
         }
@@ -112,7 +106,6 @@ export function createId() {
 // clear all shapes from the edit mode
 
 export function clearTransformer() {
-    console.log('clearTransformer');
     if (transformer.nodes()){
         transformer.nodes().forEach(node => {
             node.draggable(false);
@@ -132,39 +125,36 @@ function updateXYsize(node) {
     node.offsetY(node.height()/2);
 }
 
-let storeObjBefore = undefined;
+export function setOffsetCenter(node) {
+    node.offsetX(node.width()/2);
+    node.offsetY(node.height()/2);
+}
 
 export function createNodeEvents(node) {
     node.on('dragstart transformstart', function(event) {
-        storeObjBefore = event.target.clone();
-        setBeforeID(storeObjBefore);
+        //storeObjBefore = event.target.clone();
     });
 
     node.on('dragend transformend', function(event) {
-        const objAfter = event.target.clone();
-        setAfterID(objAfter);
-        actionEvents.createChanged(storeObjBefore, objAfter);
+        //const objAfter = event.target.clone();
     })
 
     // movement and transform events - update editor values
     node.on('dragmove', function () {
         const x = document.getElementById('edit-x');
         const y = document.getElementById('edit-y');
-        x.innerText = node.x().toFixed(2);
-        y.innerText = node.y().toFixed(2);
+        if (x && y) {
+            x.innerText = node.x().toFixed(2);
+            y.innerText = node.y().toFixed(2);
+        }
     })
 
     node.on('transform', function () {
         const r = document.getElementById('edit-rot');
-        console.log('test ' + node.id());
-        r.innerText = node.rotation().toFixed(2);
+        //console.log('test ' + node.id());
+        if (r) {
+            r.innerText = node.rotation().toFixed(2);
+        }
     });
-}
 
-export function setBeforeID(node) {
-    node.id('bef-' + node.id());
-}
-
-export function setAfterID(node) {
-    node.id('aft-' + node.id());
 }

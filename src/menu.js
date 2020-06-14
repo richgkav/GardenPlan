@@ -1,10 +1,8 @@
 import * as Kman from './konva-man';
 
-import { actionEvents } from './undo-redo';
-
 let menu = undefined;
 
-function setup() {
+export function setup() {
 
     menu = new Menu();
 
@@ -12,17 +10,12 @@ function setup() {
 
     menu.addItem('Rectangle','menu-item','menu-rect', 20);
     menu.addItem('Circle','menu-item','menu-circle', 30);
-    menu.addItem('Undo', 'menu-item', 'menu-undo', 40);
-    menu.addItem('Redo', 'menu-item', 'menu-redo', 40);
     menu.renderItems('menu-buttons');
 
     // -- adding a rectangle shape -- //
 
-//    let storeObjBefore = undefined;
-
     const elMenuBox = document.getElementById('menu-rect');
     elMenuBox.addEventListener('click', (event) => {
-        //menu.selectItem(elMenuBox);
 
         const rect = new Konva.Rect({
             x: Kman.stage.width() / 2,
@@ -34,11 +27,7 @@ function setup() {
         });
 
         rect.id(Kman.createId());           // Set the id for the shape that is visible
-        setOffsetCenter(rect);              // set for newly created shape
-
-        const objAfter = rect.clone();
-        Kman.setAfterID(objAfter);
-        actionEvents.createAdded(objAfter); // set undo states
+        Kman.setOffsetCenter(rect);              // set for newly created shape
         Kman.createNodeEvents(rect);             // transform events
         Kman.layer.add(rect);
         Kman.clearTransformer();                 // unselect and unmove everything
@@ -51,68 +40,6 @@ function setup() {
     elMenuCircle.addEventListener('click', (event) => {
         menu.selectItem(elMenuCircle);   
     });
-
-    // ------------------------ UNDO ------------------------ //
-
-    const elUndoButton = document.getElementById('menu-undo');
-    elUndoButton.addEventListener('click', function() {
-
-        Kman.clearTransformer();
-        // need to look at the Instruction stored in the current actionEvent to check
-        // the objBefore & objAfter values to indicate what needs to be done
-
-        const instruction = actionEvents.undo();        // get the instruction 
-    
-        // Undo for object that was ADDED (new)
-
-        if (instruction && instruction.objBefore === null) {
-            const idToSearch = instruction.objAfter.id().substring(4);
-            const obj_onStage = Kman.stage.findOne('#'+ idToSearch);
-            instruction.objAfter = obj_onStage.clone(); // copy current stage object (for updated values)
-            Kman.setAfterID(instruction.objAfter);
-            obj_onStage.hide();
-            Kman.layer.draw();
-        }
-
-        // Undo for object that was CHANGED OR DELETED
-
-        if (instruction && instruction.objBefore !== null) {
-            const idToSearch = instruction.objBefore.id().substring(4);     // the id of the layer shape
-            const obj_onStage = Kman.stage.findOne('#'+ idToSearch);
-            obj_onStage.destroy();
-            const obj_befClone = instruction.objBefore.clone();
-            obj_befClone.id(idToSearch);                                    // correct the id
-            Kman.layer.add(obj_befClone);
-            Kman.layer.draw();
-        }
-
-    });
-
-    // ------------------------ REDO ------------------------ //
-    // only need to copy objAfter to layer in all cases
-
-    const elRedoButton = document.getElementById('menu-redo');
-    elRedoButton.addEventListener('click', function() {
-        const instruction = actionEvents.redo();
-
-        if (instruction) {
-            const idToSearch = instruction.objAfter.id().substring(4);
-            const obj_onStage = Kman.stage.findOne('#'+ idToSearch);
-            obj_onStage.destroy();
-            const obj_copy = instruction.objAfter.clone();          // copy the stored object ('aft-00')
-            obj_copy.id(idToSearch);
-            Kman.createNodeEvents(obj_copy);
-            obj_copy.show();
-            Kman.layer.add(obj_copy);
-            Kman.layer.draw();
-        }
-    });
-
-}
-
-function setOffsetCenter(node) {
-    node.offsetX(node.width()/2);
-    node.offsetY(node.height()/2);
 }
 
 export class Menu {
@@ -179,8 +106,4 @@ class MenuItem {
         }
         return div;
     }
-}
-
-export {
-    setup as setup_menu
 }
