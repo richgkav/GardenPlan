@@ -1,4 +1,5 @@
-import {kman_layer, kman_stage, kman_clear, kman_createId} from './konva-man';
+import * as Kman from './konva-man';
+
 import { actionEvents } from './undo-redo';
 
 let menu = undefined;
@@ -17,67 +18,31 @@ function setup() {
 
     // -- adding a rectangle shape -- //
 
-    let storeObjBefore = undefined;
+//    let storeObjBefore = undefined;
 
     const elMenuBox = document.getElementById('menu-rect');
     elMenuBox.addEventListener('click', (event) => {
         //menu.selectItem(elMenuBox);
 
         const rect = new Konva.Rect({
-            x: kman_stage.width() / 2,
-            y: kman_stage.height() / 2,
+            x: Kman.stage.width() / 2,
+            y: Kman.stage.height() / 2,
             width: 100,
             height: 100,
-            fill: 'red',
-            strokeWidth: 2,
+            fill: 'white',
+            strokeWidth: 0,
         });
 
-        rect.id(kman_createId());           // Set the id for the shape that is visible
+        rect.id(Kman.createId());           // Set the id for the shape that is visible
         setOffsetCenter(rect);              // set for newly created shape
 
-        // set undo action. this is new object so objBefore === null
         const objAfter = rect.clone();
-        //console.log('x');
-        //console.log(objAfter);
-        setAfterID(objAfter);
-        actionEvents.createAdded(objAfter);
-        //setOffsetCenter(objAfter); - offset is copied also no need to set here
-
-        rect.on('dragstart transformstart', function(event) {
-            storeObjBefore = event.target.clone();
-            setBeforeID(storeObjBefore);
-            //setOffsetCenter(storeObjBefore);
-            //storeObjBefore.hide();
-        });
-
-        rect.on('dragend transformend', function(event) {
-            const objAfter = event.target.clone();
-           // objAfter.id('aft-' + event.target.id());
-            setAfterID(objAfter);
-            //setOffsetCenter(objAfter);
-            //objAfter.hide();
-            actionEvents.createChanged(storeObjBefore, objAfter);
-            //actionEvents.newInstruction(storeObjBefore, objAfter);
-
-            // clear transform to remove editor bounds
-        })
-
-        // movement and transform events - update editor values
-        rect.on('dragmove', function () {
-            const x = document.getElementById('edit-x');
-            const y = document.getElementById('edit-y');
-            x.innerText = rect.x().toFixed(2);
-            y.innerText = rect.y().toFixed(2);
-        })
-
-        rect.on('transform', function () {
-            const r = document.getElementById('edit-rot');
-            r.innerText = rect.rotation().toFixed(2);
-        });
-
-        kman_layer.add(rect);
-        kman_clear();           // unselect and unmove everything
-        kman_layer.draw();
+        Kman.setAfterID(objAfter);
+        actionEvents.createAdded(objAfter); // set undo states
+        Kman.createNodeEvents(rect);             // transform events
+        Kman.layer.add(rect);
+        Kman.clearTransformer();                 // unselect and unmove everything
+        Kman.layer.draw();
     });
 
     // -- end of adding a rectangle shape -- //
@@ -92,7 +57,7 @@ function setup() {
     const elUndoButton = document.getElementById('menu-undo');
     elUndoButton.addEventListener('click', function() {
 
-        kman_clear();
+        Kman.clearTransformer();
         // need to look at the Instruction stored in the current actionEvent to check
         // the objBefore & objAfter values to indicate what needs to be done
 
@@ -102,23 +67,23 @@ function setup() {
 
         if (instruction && instruction.objBefore === null) {
             const idToSearch = instruction.objAfter.id().substring(4);
-            const obj_onStage = kman_stage.findOne('#'+ idToSearch);
+            const obj_onStage = Kman.stage.findOne('#'+ idToSearch);
             instruction.objAfter = obj_onStage.clone(); // copy current stage object (for updated values)
-            setAfterID(instruction.objAfter);
+            Kman.setAfterID(instruction.objAfter);
             obj_onStage.hide();
-            kman_layer.draw();
+            Kman.layer.draw();
         }
 
         // Undo for object that was CHANGED OR DELETED
 
         if (instruction && instruction.objBefore !== null) {
             const idToSearch = instruction.objBefore.id().substring(4);     // the id of the layer shape
-            const obj_onStage = kman_stage.findOne('#'+ idToSearch);
+            const obj_onStage = Kman.stage.findOne('#'+ idToSearch);
             obj_onStage.destroy();
             const obj_befClone = instruction.objBefore.clone();
             obj_befClone.id(idToSearch);                                    // correct the id
-            kman_layer.add(obj_befClone);
-            kman_layer.draw();
+            Kman.layer.add(obj_befClone);
+            Kman.layer.draw();
         }
 
     });
@@ -132,13 +97,14 @@ function setup() {
 
         if (instruction) {
             const idToSearch = instruction.objAfter.id().substring(4);
-            const obj_onStage = kman_stage.findOne('#'+ idToSearch);
+            const obj_onStage = Kman.stage.findOne('#'+ idToSearch);
             obj_onStage.destroy();
             const obj_copy = instruction.objAfter.clone();          // copy the stored object ('aft-00')
             obj_copy.id(idToSearch);
+            Kman.createNodeEvents(obj_copy);
             obj_copy.show();
-            kman_layer.add(obj_copy);
-            kman_layer.draw();
+            Kman.layer.add(obj_copy);
+            Kman.layer.draw();
         }
     });
 
@@ -147,14 +113,6 @@ function setup() {
 function setOffsetCenter(node) {
     node.offsetX(node.width()/2);
     node.offsetY(node.height()/2);
-}
-
-function setBeforeID(node) {
-    node.id('bef-' + node.id());
-}
-
-function setAfterID(node) {
-    node.id('aft-' + node.id());
 }
 
 export class Menu {

@@ -46,17 +46,19 @@ export class Field {
         // edit field inner divs
         const itmTitDiv = document.createElement('div');
         itmTitDiv.innerText = this.title;
+        itmTitDiv.classList.add('edit-title');
         edItemdiv.appendChild(itmTitDiv);
-        const itmPropdiv = document.createElement('div');
+        const itmPropDiv = document.createElement('div');
         const prop = this.property;
         if (isNaN(prop)){
-            itmPropdiv.innerText = prop;
+            itmPropDiv.innerText = prop;
         }
         else {
-            itmPropdiv.innerText = prop.toFixed(2);
+            itmPropDiv.innerText = prop.toFixed(2);
         }
-        itmPropdiv.id = this.divId;
-        edItemdiv.appendChild(itmPropdiv);
+        itmPropDiv.id = this.divId;
+        itmPropDiv.classList.add('edit-prop');
+        edItemdiv.appendChild(itmPropDiv);
         edItemdiv.addEventListener('click', () => {
             console.log(itmTitDiv.innerText);
         });

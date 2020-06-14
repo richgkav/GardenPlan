@@ -1,10 +1,10 @@
 import "./styles.css";
 import { setup_menu } from "./menu";
-import { setup_Konva } from './konva-man';
+import * as Kman from './konva-man';
 import { setup_actionEvents } from "./undo-redo";
 
 const gardenPlan = function() {
-    setup_Konva();
+    Kman.setup();
     setup_actionEvents();
     setup_menu();
 };

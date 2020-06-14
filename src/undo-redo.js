@@ -10,31 +10,26 @@ export class ActionEvents {
         this.location = 0;          // the current event
     }
 
-    newInstruction(objBefore, objAfter) {
+    newState(objBefore, objAfter) {
 
         // remove following events if one is changed
         this.eventline.length = this.location;
 
-        const inst = new Instruction(objBefore, objAfter);
-        this.eventline.push(inst);
+        const aState = new ActionStates(objBefore, objAfter);
+        this.eventline.push(aState);
         this.location++;
-        console.log(`actionEvents added - events stored = ${this.eventline.length}`);
-        console.log(`location = ${this.location} - length = ${this.eventline.length}`);
-        return inst;
+        return aState;
     }
 
     // if user performs an undo and then makes a change the rest of the 
     // timeline is lost so cut those elements from the array
 
     removeAfter() {
-        console.log(`previous length = ${this.eventline.length}`);
         this.eventline.length = location;
-        console.log(`new length = ${this.eventline.length}`);
     }
 
     undo() {
         if (this._stepBack()) {
-            console.log('undo -- location = ' + this.location);
             return this.eventline[this.location];
         }
         return null;
@@ -49,10 +44,9 @@ export class ActionEvents {
     }
 
     redo() {
-        console.log('Perform redo on location = ' + this.location);
-        const instruction = this.eventline[this.location];
+        const actionState = this.eventline[this.location];
         this._stepForward(); // set location to next step
-        return instruction;
+        return actionState;
     }
 
     _stepForward() {
@@ -64,28 +58,20 @@ export class ActionEvents {
     }
 
     createAdded(objAfter) {
-        this.newInstruction(null, objAfter);
+        this.newState(null, objAfter);
     }
 
     createChanged(objBefore, objAfter) {
-        this.newInstruction(objBefore, objAfter);
+        this.newState(objBefore, objAfter);
     }
 
     createDeleted(objBefore) {
-        this.newInstruction(objBefore, null);
+        this.newState(objBefore, null);
     }
 
 }
 
-// stores object before and after change
-
-// when adding a new object objBefore is set to null so that if undoing and
-// null is found then that meand remove the object
-
-// when undoing objBefore is used
-// when redoing objAfter is used
-
-class Instruction {
+class ActionStates {
     constructor(objBefore, objAfter) {
         this.objBefore = objBefore;
         this.objAfter = objAfter;
@@ -93,7 +79,6 @@ class Instruction {
 }
 
 export {
-    Instruction,
     setup_actionEvents,
     actionEvents
 }

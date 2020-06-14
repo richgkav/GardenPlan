@@ -53,11 +53,21 @@
     align-content: flex-start;
 }
 
-.edit-item>div {
+.edit-title {
     font-size: small;
     border-style: solid;
     border-width: 1px;
     padding: 2px;
+    border-radius: 5px;
+}
+
+.edit-prop {
+    font-size: small;
+    border-style: solid;
+    border-width: 1px;
+    padding: 2px;
+    border-radius: 3px;
+    margin-left: 2px;
 }
 
 .menu-item:hover {

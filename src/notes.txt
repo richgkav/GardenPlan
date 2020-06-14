@@ -1,32 +1,10 @@
+ToDo
+====
 
-NEXT
-
-Tidy code!
-
-Setting the offset - only needs to be done when creating a shape or changing a shapes size
-
-
-Undo functionality
-==================
-
-For every instruction of the timeline:
-
-    There is a copy of the object before change
-    There is a copy of the object after change
-
-
-* Adding a new object
-    objBefore = null
-    objAfter = copy of shape
-
-
-
-If you undo then make a change all instructions after that time are deleted
-
-
-
-
-
+Group shapes
+Make edit fields work
+Zoom in and out
+Delete shapes
 
 Future
 ======

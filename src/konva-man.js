@@ -1,13 +1,15 @@
 import Konva from 'konva';
 import {Field, Editor} from './editor';
+import {actionEvents} from './undo-redo';
+//import {setBeforeID, setAfterID} from './menu';
 
-const layer = new Konva.Layer();
-let stage = undefined;
-const transformer = new Konva.Transformer();
+export const layer = new Konva.Layer();
+export let stage = undefined;
+export const transformer = new Konva.Transformer();
 
 let editor = undefined;
 
-function setup() {
+export function setup() {
 
     //console.log('setup called');
 
@@ -103,13 +105,14 @@ function renderEditorFields(event) {
 
 let konvaId = 0; // unique id for each shape
 
-function createId() {
+export function createId() {
     return 'kon' + konvaId++;
 }
 
 // clear all shapes from the edit mode
 
 export function clearTransformer() {
+    console.log('clearTransformer');
     if (transformer.nodes()){
         transformer.nodes().forEach(node => {
             node.draggable(false);
@@ -129,11 +132,39 @@ function updateXYsize(node) {
     node.offsetY(node.height()/2);
 }
 
-export {
-    layer as kman_layer,
-    stage as kman_stage,
-    transformer as kman_trans,
-    setup as setup_Konva,
-    clearTransformer as kman_clear,
-    createId as kman_createId
+let storeObjBefore = undefined;
+
+export function createNodeEvents(node) {
+    node.on('dragstart transformstart', function(event) {
+        storeObjBefore = event.target.clone();
+        setBeforeID(storeObjBefore);
+    });
+
+    node.on('dragend transformend', function(event) {
+        const objAfter = event.target.clone();
+        setAfterID(objAfter);
+        actionEvents.createChanged(storeObjBefore, objAfter);
+    })
+
+    // movement and transform events - update editor values
+    node.on('dragmove', function () {
+        const x = document.getElementById('edit-x');
+        const y = document.getElementById('edit-y');
+        x.innerText = node.x().toFixed(2);
+        y.innerText = node.y().toFixed(2);
+    })
+
+    node.on('transform', function () {
+        const r = document.getElementById('edit-rot');
+        console.log('test ' + node.id());
+        r.innerText = node.rotation().toFixed(2);
+    });
+}
+
+export function setBeforeID(node) {
+    node.id('bef-' + node.id());
+}
+
+export function setAfterID(node) {
+    node.id('aft-' + node.id());
 }
